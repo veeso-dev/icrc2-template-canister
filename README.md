@@ -2,8 +2,6 @@
 
 [![license-mit](https://img.shields.io/badge/License-MIT-teal.svg)](https://opensource.org/license/mit/)
 [![build-test](https://github.com/veeso-dev/icrc2-template-canister/actions/workflows/build-test.yml/badge.svg)](https://github.com/veeso-dev/icrc2-template-canister/actions/workflows/build-test.yml)
-[![downloads](https://img.shields.io/crates/d/icrc2-template-canister.svg)](https://crates.io/crates/icrc2-template-canister)
-[![latest version](https://img.shields.io/crates/v/icrc2-template-canister.svg)](https://crates.io/crates/icrc2-template-canister)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 ---
