@@ -71,7 +71,7 @@ impl Inspect {
             .unwrap_or(false)
         {
             return Err(ApproveError::BadFee {
-                expected_fee: default_fee.into(),
+                expected_fee: default_fee,
             });
         }
         // check if expired
@@ -114,7 +114,7 @@ impl Inspect {
             .unwrap_or(false)
         {
             return Err(TransferFromError::BadFee {
-                expected_fee: default_fee.into(),
+                expected_fee: default_fee,
             });
         }
 

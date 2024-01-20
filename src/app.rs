@@ -420,7 +420,7 @@ mod test {
         let metadata = Icrc2Canister::icrc1_metadata();
         assert_eq!(metadata.len(), 5);
         assert_eq!(
-            metadata.get(0).unwrap(),
+            metadata.first().unwrap(),
             &(
                 "icrc1:symbol".to_string(),
                 MetadataValue::from(ICRC1_SYMBOL)
@@ -455,7 +455,7 @@ mod test {
         init_canister();
         assert_eq!(
             Icrc2Canister::icrc1_total_supply(),
-            Nat::from(int_to_decimals(8_888_888))
+            int_to_decimals(8_888_888)
         );
     }
 
@@ -473,15 +473,15 @@ mod test {
         init_canister();
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(alice_account()),
-            Nat::from(int_to_decimals(50_000))
+            int_to_decimals(50_000)
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(bob_account()),
-            Nat::from(int_to_decimals(50_000))
+            int_to_decimals(50_000)
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(caller_account()),
-            Nat::from(int_to_decimals(100_000))
+            int_to_decimals(100_000)
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(Account {
@@ -498,7 +498,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: Some(Nat::from(ICRC1_FEE)),
             created_at_time: Some(utils::time()),
             memo: None,
@@ -506,11 +506,11 @@ mod test {
         assert!(Icrc2Canister::icrc1_transfer(transfer_args).is_ok());
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(caller_account()),
-            Nat::from(int_to_decimals(90_000) - ICRC1_FEE)
+            (int_to_decimals(90_000) - ICRC1_FEE)
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(bob_account()),
-            Nat::from(int_to_decimals(60_000))
+            int_to_decimals(60_000)
         );
     }
 
@@ -520,7 +520,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: Some(Nat::from(ICRC1_FEE)),
             created_at_time: Some(0),
             memo: None,
@@ -537,7 +537,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: Some(Nat::from(ICRC1_FEE)),
             created_at_time: Some(utils::time() - (ICRC1_TX_TIME_SKID.as_nanos() as u64 * 2)),
             memo: None,
@@ -554,7 +554,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: Some(Nat::from(ICRC1_FEE)),
             created_at_time: Some(utils::time() + (ICRC1_TX_TIME_SKID.as_nanos() as u64 * 2)),
             memo: None,
@@ -571,7 +571,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: Some(Nat::from(ICRC1_FEE / 2)),
             created_at_time: Some(utils::time()),
             memo: None,
@@ -589,7 +589,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: None,
             created_at_time: Some(utils::time()),
             memo: None,
@@ -597,7 +597,7 @@ mod test {
         assert!(Icrc2Canister::icrc1_transfer(transfer_args).is_ok());
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(caller_account()),
-            Nat::from(int_to_decimals(90_000) - ICRC1_FEE)
+            (int_to_decimals(90_000) - ICRC1_FEE)
         );
     }
 
@@ -607,7 +607,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: Some(Nat::from(ICRC1_FEE * 2)),
             created_at_time: Some(utils::time()),
             memo: None,
@@ -615,7 +615,7 @@ mod test {
         assert!(Icrc2Canister::icrc1_transfer(transfer_args).is_ok());
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(caller_account()),
-            Nat::from(int_to_decimals(90_000) - (ICRC1_FEE * 2))
+            (int_to_decimals(90_000) - (ICRC1_FEE * 2))
         );
     }
 
@@ -625,7 +625,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: None,
             created_at_time: Some(utils::time()),
             memo: Some("9888".as_bytes().to_vec().into()),
@@ -639,7 +639,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: None,
             created_at_time: Some(utils::time()),
             memo: Some("988898889888988898889888988898889888988898889888988898889888988898889888988898889888988898889888".as_bytes().to_vec().into()),
@@ -657,7 +657,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: Some(Nat::from(ICRC1_FEE)),
             created_at_time: Some(utils::time()),
             memo: Some(
@@ -671,11 +671,11 @@ mod test {
         assert!(Icrc2Canister::icrc1_transfer(transfer_args).is_ok());
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(caller_account()),
-            Nat::from(int_to_decimals(90_000) - ICRC1_FEE)
+            (int_to_decimals(90_000) - ICRC1_FEE)
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(bob_account()),
-            Nat::from(int_to_decimals(60_000))
+            int_to_decimals(60_000)
         );
     }
 
@@ -685,7 +685,7 @@ mod test {
         let transfer_args = TransferArg {
             from_subaccount: caller_account().subaccount,
             to: Icrc2Canister::icrc1_minting_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: None,
             created_at_time: Some(utils::time()),
             memo: None,
@@ -693,11 +693,11 @@ mod test {
         assert!(Icrc2Canister::icrc1_transfer(transfer_args).is_ok());
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(caller_account()),
-            Nat::from(int_to_decimals(90_000))
+            int_to_decimals(90_000)
         );
         assert_eq!(
             Icrc2Canister::icrc1_total_supply(),
-            Nat::from(int_to_decimals(8_888_888 - 10_000))
+            int_to_decimals(8_888_888 - 10_000)
         );
     }
 
@@ -707,7 +707,7 @@ mod test {
         let extensions = Icrc2Canister::icrc1_supported_standards();
         assert_eq!(extensions.len(), 2);
         assert_eq!(
-            extensions.get(0).unwrap().name,
+            extensions.first().unwrap().name,
             crate::TokenExtension::icrc1().name
         );
         assert_eq!(
@@ -722,7 +722,7 @@ mod test {
         let approval_args = ApproveArgs {
             from_subaccount: caller_account().subaccount,
             spender: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: None,
             expires_at: None,
             expected_allowance: None,
@@ -738,7 +738,7 @@ mod test {
                 spender: bob_account(),
             }),
             Allowance {
-                allowance: Nat::from(int_to_decimals(10_000)),
+                allowance: int_to_decimals(10_000),
                 expires_at: None,
             }
         );
@@ -755,8 +755,8 @@ mod test {
         let approval_args = ApproveArgs {
             from_subaccount: caller_account().subaccount,
             spender: bob_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
-            fee: Some(Nat::from(int_to_decimals(110_000))),
+            amount: int_to_decimals(10_000),
+            fee: Some(int_to_decimals(110_000)),
             expires_at: None,
             expected_allowance: None,
             memo: None,
@@ -772,7 +772,7 @@ mod test {
         let approval_args = ApproveArgs {
             from_subaccount: bob_account().subaccount,
             spender: caller_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: None,
             expires_at: None,
             expected_allowance: None,
@@ -786,7 +786,7 @@ mod test {
                 spender: caller_account(),
             }),
             Allowance {
-                allowance: Nat::from(int_to_decimals(10_000)),
+                allowance: int_to_decimals(10_000),
                 expires_at: None,
             }
         );
@@ -796,7 +796,7 @@ mod test {
             spender_subaccount: caller_account().subaccount,
             from: bob_account(),
             to: alice_account(),
-            amount: Nat::from(int_to_decimals(10_000)),
+            amount: int_to_decimals(10_000),
             fee: None,
             memo: None,
             created_at_time: None,
@@ -805,15 +805,15 @@ mod test {
         // verify balance
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(bob_account()),
-            Nat::from(int_to_decimals(40_000))
+            int_to_decimals(40_000)
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(alice_account()),
-            Nat::from(int_to_decimals(60_000))
+            int_to_decimals(60_000)
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(caller_account()),
-            Nat::from(int_to_decimals(100_000) - ICRC1_FEE)
+            (int_to_decimals(100_000) - ICRC1_FEE)
         );
         // verify allowance
         assert_eq!(
@@ -822,7 +822,7 @@ mod test {
                 spender: caller_account(),
             }),
             Allowance {
-                allowance: Nat::from(int_to_decimals(0)),
+                allowance: int_to_decimals(0),
                 expires_at: None,
             }
         );
@@ -838,7 +838,7 @@ mod test {
             symbol: ICRC1_SYMBOL.to_string(),
             name: ICRC1_NAME.to_string(),
             decimals: ICRC1_DECIMALS,
-            fee: ICRC1_FEE.into(),
+            fee: ICRC1_FEE,
             logo: ICRC1_LOGO.to_string(),
             total_supply: int_to_decimals(8_888_888),
             minting_account: minting_account(),

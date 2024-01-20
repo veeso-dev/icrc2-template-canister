@@ -182,7 +182,7 @@ mod test {
 
         Balance::init_balances(total_supply, initial_balances);
 
-        let canister_account = CANISTER_WALLET_ACCOUNT.with_borrow(|wallet| wallet.get().0.clone());
+        let canister_account = CANISTER_WALLET_ACCOUNT.with_borrow(|wallet| wallet.get().0);
         assert_eq!(
             Balance::balance_of(canister_account).unwrap(),
             int_to_decimals(8_888_888 - 188_888 - 100_000)
@@ -206,7 +206,7 @@ mod test {
             subaccount: Some(utils::random_subaccount().await),
         };
 
-        let initial_balances = vec![(recipient_account.clone(), int_to_decimals(888))];
+        let initial_balances = vec![(recipient_account, int_to_decimals(888))];
 
         Balance::init_balances(total_supply, initial_balances);
 

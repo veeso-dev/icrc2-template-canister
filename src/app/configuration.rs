@@ -82,7 +82,7 @@ impl Configuration {
     }
 
     pub fn get_decimals() -> u8 {
-        DECIMALS.with(|decimals| decimals.borrow().get().clone())
+        DECIMALS.with(|decimals| *decimals.borrow().get())
     }
 
     pub fn set_fee(fee: u64) {
@@ -92,7 +92,7 @@ impl Configuration {
     }
 
     pub fn get_fee() -> u64 {
-        FEE.with(|fee| fee.borrow().get().clone())
+        FEE.with(|fee| *fee.borrow().get())
     }
 
     pub fn set_logo(logo: String) {
