@@ -264,7 +264,7 @@ impl Icrc2Canister {
     ) -> Result<Nat, icrc2::transfer_from::TransferFromError> {
         Inspect::inspect_icrc2_transfer_from(&args)?;
 
-        // check if owner has enough balance
+        // check if owner has enough balance + fee
         let owner_balance = Self::icrc1_balance_of(args.from);
         let fee = args.fee.clone().unwrap_or(Self::icrc1_fee());
         let total_amount = args.amount.clone() + fee.clone();
@@ -308,16 +308,16 @@ impl Icrc2Canister {
                 Err(icrc2::transfer_from::TransferFromError::TooOld)
             }
             Err(e) => Err(icrc2::transfer_from::TransferFromError::GenericError {
-                error_code: 0.into(),
+                error_code: 0_u64.into(),
                 message: e.to_string(),
             }),
         }?;
 
-        // pay fee
+        // pay fee (the fee is paid by from account, not by spender account)
         Balance::transfer_wno_fees(args.from, Configuration::get_minting_account(), fee.clone())
             .map_err(
                 |_| icrc2::transfer_from::TransferFromError::InsufficientFunds {
-                    balance: Self::icrc1_balance_of(spender),
+                    balance: Self::icrc1_balance_of(args.from),
                 },
             )?;
 
