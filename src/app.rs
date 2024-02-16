@@ -266,7 +266,9 @@ impl Icrc2Canister {
 
         // check if owner has enough balance
         let owner_balance = Self::icrc1_balance_of(args.from);
-        if owner_balance < args.amount {
+        let fee = args.fee.clone().unwrap_or(Self::icrc1_fee());
+        let total_amount = args.amount.clone() + fee.clone();
+        if owner_balance < total_amount {
             return Err(icrc2::transfer_from::TransferFromError::InsufficientFunds {
                 balance: owner_balance,
             });
@@ -277,17 +279,10 @@ impl Icrc2Canister {
             owner: caller(),
             subaccount: args.spender_subaccount,
         };
-        let spender_balance = Self::icrc1_balance_of(spender);
-        let fee = args.fee.clone().unwrap_or(Self::icrc1_fee());
-        if spender_balance < fee {
-            return Err(icrc2::transfer_from::TransferFromError::InsufficientFunds {
-                balance: spender_balance,
-            });
-        }
 
         // check allowance
         let (allowance, expires_at) = SpendAllowance::get_allowance(args.from, spender);
-        if allowance < args.amount {
+        if allowance < total_amount {
             return Err(
                 icrc2::transfer_from::TransferFromError::InsufficientAllowance { allowance },
             );
@@ -302,7 +297,7 @@ impl Icrc2Canister {
         match SpendAllowance::spend_allowance(
             caller(),
             args.from,
-            args.amount.clone(),
+            total_amount.clone(),
             args.spender_subaccount,
         ) {
             Ok(()) => Ok(()),
@@ -319,7 +314,7 @@ impl Icrc2Canister {
         }?;
 
         // pay fee
-        Balance::transfer_wno_fees(spender, Configuration::get_minting_account(), fee.clone())
+        Balance::transfer_wno_fees(args.from, Configuration::get_minting_account(), fee.clone())
             .map_err(
                 |_| icrc2::transfer_from::TransferFromError::InsufficientFunds {
                     balance: Self::icrc1_balance_of(spender),
@@ -772,7 +767,7 @@ mod test {
         let approval_args = ApproveArgs {
             from_subaccount: bob_account().subaccount,
             spender: caller_account(),
-            amount: int_to_decimals(10_000),
+            amount: int_to_decimals(10_000) + ICRC1_FEE,
             fee: None,
             expires_at: None,
             expected_allowance: None,
@@ -786,7 +781,7 @@ mod test {
                 spender: caller_account(),
             }),
             Allowance {
-                allowance: int_to_decimals(10_000),
+                allowance: int_to_decimals(10_000) + ICRC1_FEE,
                 expires_at: None,
             }
         );
@@ -805,7 +800,7 @@ mod test {
         // verify balance
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(bob_account()),
-            int_to_decimals(40_000)
+            int_to_decimals(40_000) - ICRC1_FEE
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(alice_account()),
@@ -813,7 +808,7 @@ mod test {
         );
         assert_eq!(
             Icrc2Canister::icrc1_balance_of(caller_account()),
-            (int_to_decimals(100_000) - ICRC1_FEE)
+            (int_to_decimals(100_000))
         );
         // verify allowance
         assert_eq!(
